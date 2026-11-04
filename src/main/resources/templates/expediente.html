@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Expediente')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+        <h1>
+            <span th:text="${actual.rol.name() == 'CLIENTE'} ? 'Mi expediente' : 'Expediente'">Mi expediente</span>
+            N.º <span th:text="${expediente.numero}">2026-0001</span> – Estado actual:
+            <span th:text="${expediente.estado.nombre}">En revisión</span>
+        </h1>
+        <p>
+            <span th:text="${expediente.cliente.nombreCompleto()}">Pérez, Ana</span> ·
+            <span th:text="${expediente.pais} + ', ' + ${expediente.via}">Italia</span> ·
+            Ascendiente: <span th:text="${expediente.ascendiente}">Pérez, Giuseppe</span> ·
+            Gestor: <span th:text="${expediente.gestor.nombre}">López, Marta</span>
+            <span th:if="${expediente.fechaTurno}"> · Turno consular:
+                <span th:text="${#temporals.format(expediente.fechaTurno, 'dd/MM/yyyy')}">01/12/2026</span></span>
+        </p>
+        <p th:if="${expediente.resolucion}"><strong>Resolución:</strong> <span th:text="${expediente.resolucion}">Resolución</span></p>
+
+        <div class="estados">
+            <div th:each="s : ${secuencia}" class="estado"
+                 th:classappend="${s.posicion() <= expediente.estado.posicion()} ? 'alcanzado'">
+                <div class="punto"></div>
+                <span th:text="${s.nombre}">Iniciado</span>
+            </div>
+        </div>
+
+        <div class="resumen">
+            <span>Observaciones pendientes: <span th:text="${#lists.size(observaciones)}">1</span></span>
+            <span>Documentos faltantes: <span th:text="${faltantes}">2</span></span>
+        </div>
+
+        <div class="acciones">
+            <a th:if="${puedeCargar}" class="boton primario" th:href="@{/expedientes/{id}/documentos/nuevo(id=${expediente.id})}">Cargar documento</a>
+            <a th:if="${puedeRevisar}" class="boton primario" th:href="@{/expedientes/{id}/revision(id=${expediente.id})}">Revisar documentación</a>
+        </div>
+
+        <h2>Requisitos y documentos</h2>
+        <table>
+            <thead><tr><th>Documento</th><th>Persona</th><th>Versión</th><th>Validación preliminar</th><th>Revisión</th></tr></thead>
+            <tbody>
+            <tr th:each="f : ${filas}">
+                <td th:text="${f.requisito.documento}">Acta de nacimiento</td>
+                <td th:text="${f.requisito.persona}">Solicitante</td>
+                <td>
+                    <a th:if="${f.vigente}" th:href="@{/versiones/{id}/archivo(id=${f.vigente.id})}" target="_blank"
+                       th:text="'v' + ${f.vigente.numero}">v1</a>
+                    <span th:unless="${f.vigente}">—</span>
+                </td>
+                <td><span th:text="${f.resultadoTexto()}">✓ Validado</span>
+                    <div class="nota" th:if="${f.resultado == 'INCONSISTENTE'}" th:text="${f.detalle}">Detalle</div></td>
+                <td th:text="${f.documento != null} ? ${f.documento.estadoRevision.etiqueta} : '—'">Aprobado</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:unless="${#lists.isEmpty(observaciones)}">
+            <h2>Observaciones pendientes</h2>
+            <table>
+                <thead><tr><th>Fecha</th><th>Documento</th><th>Observación</th></tr></thead>
+                <tbody>
+                <tr th:each="o : ${observaciones}">
+                    <td th:text="${#temporals.format(o.fecha, 'dd/MM/yyyy HH:mm')}">24/09/2026 11:30</td>
+                    <td th:text="${o.version.documento.requisito.etiqueta()} + ' (v' + ${o.version.numero} + ')'">Acta</td>
+                    <td th:text="${o.texto}">Texto</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Historial del expediente</h2>
+        <table>
+            <thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Rol</th><th>Acción</th></tr></thead>
+            <tbody>
+            <tr th:each="h : ${historial}">
+                <td th:text="${#temporals.format(h.fechaHora, 'dd/MM/yyyy HH:mm')}">20/09/2026 10:12</td>
+                <td th:text="${h.usuario}">Gómez, Luis</td>
+                <td th:text="${h.rol}">Administrativo</td>
+                <td><strong th:text="${h.accion}">Alta del expediente</strong>: <span th:text="${h.detalle}">detalle</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+</body>
+</html>

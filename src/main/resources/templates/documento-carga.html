@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Cargar documento')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+        <h1>Cargar documento – Expediente N.º <span th:text="${expediente.numero}">2026-0001</span>
+            (<span th:text="${expediente.pais} + ', ' + ${expediente.via}">Italia</span>)</h1>
+        <form th:action="@{/expedientes/{id}/documentos(id=${expediente.id})}" method="post" enctype="multipart/form-data">
+            <div class="campo">
+                <label for="requisito">Requisito</label>
+                <select id="requisito" name="requisito" required>
+                    <option th:each="r : ${expediente.requisitos}" th:value="${r.id}"
+                            th:selected="${r.id == seleccionado}" th:text="${r.etiqueta()}">Acta de nacimiento – Solicitante</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="archivo">Archivo (PDF, JPG o PNG, hasta 10 MB)</label>
+                <input type="file" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
+            </div>
+            <div class="campo">
+                <label for="apellido">Apellido según el documento</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            <div class="campo">
+                <label for="nombre">Nombre según el documento</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="casillas">
+                <label><input type="checkbox" name="apostilla" value="true"> Documento apostillado</label>
+                <label><input type="checkbox" name="traduccion" value="true"> Documento traducido</label>
+            </div>
+            <div class="acciones">
+                <button type="submit" class="boton primario">Cargar</button>
+                <a class="boton" th:href="@{/expedientes/{id}(id=${expediente.id})}">Volver al expediente</a>
+            </div>
+        </form>
+
+        <div th:if="${resultado}" class="caja resultado" th:classappend="${resultadoValido} ? 'ok'">
+            <strong>Resultado de la validación preliminar</strong>
+            <ul>
+                <li th:each="linea : ${resultado}" th:text="${linea}">✗ Falta la traducción al italiano.</li>
+            </ul>
+            <div class="nota">La validación final corresponde al gestor y al consulado.</div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

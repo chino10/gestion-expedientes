@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Acceso denegado')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <h1>Acceso denegado</h1>
+        <p th:text="${mensaje} ?: 'No tiene permiso para acceder a esta página.'">No tiene permiso.</p>
+        <a class="boton" th:href="@{/}">Volver al inicio</a>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Iniciar sesión')}"></head>
+<body>
+<div class="marco">
+    <header class="encabezado"><span class="marca">Gestión de Expedientes</span></header>
+    <main class="contenido login">
+        <h1>Iniciar sesión</h1>
+        <div class="mensaje error" th:if="${param.error}">Credenciales inválidas.</div>
+        <div class="mensaje error" th:if="${param.bloqueada}">
+            La cuenta está bloqueada por superar la cantidad máxima de intentos fallidos.
+            Solicite el desbloqueo al administrador.
+        </div>
+        <div class="mensaje exito" th:if="${param.salida}">Sesión cerrada.</div>
+        <div class="mensaje exito" th:if="${param.activada}">Contraseña definida. Ya puede iniciar sesión.</div>
+        <form th:action="@{/login}" method="post">
+            <div class="campo">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" required autofocus autocomplete="username">
+            </div>
+            <div class="campo">
+                <label for="clave">Contraseña</label>
+                <input type="password" id="clave" name="clave" required autocomplete="current-password">
+            </div>
+            <div class="acciones">
+                <button type="submit" class="boton primario">Ingresar</button>
+            </div>
+        </form>
+        <p class="nota">La sesión se cierra luego de 15 minutos de inactividad.</p>
+    </main>
+</div>
+</body>
+</html>

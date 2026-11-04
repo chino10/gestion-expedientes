@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Indicadores')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+        <h1>Indicadores de seguimiento</h1>
+        <p class="nota" th:text="${alcance}">Expedientes asignados</p>
+        <form th:action="@{/indicadores}" method="get" class="acciones">
+            <label>Desde <input type="date" name="desde" th:value="${desde}" style="width:auto"></label>
+            <label>Hasta <input type="date" name="hasta" th:value="${hasta}" style="width:auto"></label>
+            <label>País
+                <select name="pais" style="width:auto">
+                    <option value="">Todos</option>
+                    <option th:each="p : ${paises}" th:value="${p}" th:selected="${p == pais}" th:text="${p}">Italia</option>
+                </select>
+            </label>
+            <button type="submit" class="boton primario">Consultar</button>
+        </form>
+
+        <div class="indicadores">
+            <div class="indicador">
+                <div>Documentación faltante</div>
+                <div class="valor" th:text="${#numbers.formatDecimal(indicadores.proporcionFaltantes(), 1, 1, 'COMMA')} + ' %'">40,0 %</div>
+                <div class="nota" th:text="${indicadores.requisitosFaltantes} + ' de ' + ${indicadores.requisitos} + (${indicadores.requisitos == 1} ? ' requisito' : ' requisitos') + ' sin documento en ' + ${indicadores.expedientes} + (${indicadores.expedientes == 1} ? ' expediente iniciado' : ' expedientes iniciados') + ' en el período'">detalle</div>
+            </div>
+            <div class="indicador">
+                <div>Inconsistencias detectadas</div>
+                <div class="valor" th:text="${indicadores.inconsistencias}">3</div>
+                <div class="nota">Versiones cargadas en el período con resultado inconsistente</div>
+            </div>
+            <div class="indicador">
+                <div>Tiempo promedio de revisión</div>
+                <div class="valor" th:text="${indicadores.promedioRevisionHoras} != null ? ${#numbers.formatDecimal(indicadores.promedioRevisionHoras, 1, 1, 'COMMA')} + ' h' : 'Sin datos'">26,5 h</div>
+                <div class="nota" th:text="'Entre la carga y la revisión, sobre ' + ${indicadores.revisiones} + (${indicadores.revisiones == 1} ? ' documento revisado' : ' documentos revisados')">detalle</div>
+            </div>
+            <div class="indicador">
+                <div>Cambios de estado registrados</div>
+                <div class="valor" th:text="${indicadores.totalCambiosDeEstado()}">5</div>
+                <div class="nota">
+                    <span th:each="c, i : ${indicadores.cambiosDeEstado}" th:text="${c.key} + ': ' + ${c.value} + (${i.last} ? '' : ' · ')">En revisión: 2</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

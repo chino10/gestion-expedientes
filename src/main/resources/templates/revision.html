@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Revisión documental')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+        <h1>Revisión documental – Expediente N.º <span th:text="${expediente.numero}">2026-0001</span>
+            &nbsp; Estado: <span th:text="${expediente.estado.nombre}">En revisión</span></h1>
+        <p class="nota" th:unless="${enRevision}">Para aprobar u observar documentos el expediente debe estar En revisión.</p>
+
+        <table>
+            <thead><tr><th>Documento</th><th>Persona</th><th>Versión</th><th>Validación</th><th>Revisión</th><th>Acción</th></tr></thead>
+            <tbody>
+            <tr th:each="f : ${filas}" th:classappend="${seleccionado != null and f.documento != null and f.documento.id == seleccionado.id} ? 'seleccionada'">
+                <td th:text="${f.requisito.documento}">Acta de nacimiento</td>
+                <td th:text="${f.requisito.persona}">Solicitante</td>
+                <td th:text="${f.vigente != null} ? ('v' + ${f.vigente.numero}) : '—'">v1</td>
+                <td><span th:text="${f.resultadoTexto()}">✓ Validado</span>
+                    <div class="nota" th:if="${f.resultado == 'INCONSISTENTE'}" th:text="${f.detalle}">Detalle</div></td>
+                <td th:text="${f.documento != null} ? ${f.documento.estadoRevision.etiqueta} : '—'">Pendiente</td>
+                <td>
+                    <span th:if="${f.vigente}">
+                        <a th:href="@{/versiones/{id}/archivo(id=${f.vigente.id})}" target="_blank">[Ver]</a>
+                        <a th:href="@{/expedientes/{id}/revision(id=${expediente.id},documento=${f.documento.id})}">[Revisar]</a>
+                    </span>
+                    <span th:unless="${f.vigente}">—</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${seleccionado != null and enRevision}">
+            <h2>Observación sobre: <span th:text="${seleccionado.requisito.etiqueta()} + ' (v' + ${seleccionado.versionVigente().numero} + ')'">Acta</span></h2>
+            <p>Declarado: <span th:text="${seleccionado.versionVigente().apellidoDeclarado} + ', ' + ${seleccionado.versionVigente().nombreDeclarado}">Pérez, Ana</span>
+                · Apostilla: <span th:text="${seleccionado.versionVigente().declaraApostilla} ? 'Sí' : 'No'">Sí</span>
+                · Traducción: <span th:text="${seleccionado.versionVigente().declaraTraduccion} ? 'Sí' : 'No'">No</span></p>
+            <div class="acciones" style="align-items:flex-start">
+                <form th:action="@{/documentos/{id}/observaciones(id=${seleccionado.id})}" method="post" style="flex:1">
+                    <textarea name="texto" required placeholder="Describa el problema y la corrección requerida."></textarea>
+                    <div class="acciones"><button type="submit" class="boton alerta">Registrar observación</button></div>
+                </form>
+                <form th:action="@{/documentos/{id}/aprobar(id=${seleccionado.id})}" method="post">
+                    <button type="submit" class="boton primario">Aprobar documento</button>
+                </form>
+            </div>
+        </div>
+
+        <form th:action="@{/expedientes/{id}/estado(id=${expediente.id})}" method="post" th:unless="${#lists.isEmpty(destinos)}">
+            <h2>Cambio de estado</h2>
+            <div class="campo">
+                <label for="destino">Cambiar estado a:</label>
+                <select id="destino" name="destino" required>
+                    <option value="">Seleccionar</option>
+                    <option th:each="d : ${destinos}" th:value="${d.codigo}" th:text="${d.nombre}">Completo</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="fechaTurno">Fecha del turno consular (para Presentado)</label>
+                <input type="date" id="fechaTurno" name="fechaTurno">
+            </div>
+            <div class="campo">
+                <label for="resolucion">Resolución comunicada (para Resuelto)</label>
+                <input type="text" id="resolucion" name="resolucion">
+            </div>
+            <div class="acciones">
+                <button type="submit" class="boton">Confirmar</button>
+                <a class="boton" th:href="@{/expedientes/{id}(id=${expediente.id})}">Ver expediente</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

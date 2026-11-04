@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Activar cuenta')}"></head>
+<body>
+<div class="marco">
+    <header class="encabezado"><span class="marca">Gestión de Expedientes</span></header>
+    <main class="contenido login">
+        <h1>Definir contraseña</h1>
+        <div th:unless="${valido}" class="mensaje error">
+            El enlace no es válido o venció. Solicite uno nuevo al estudio.
+        </div>
+        <div th:if="${valido}">
+            <div class="mensaje error" th:if="${errores}">
+                <div th:each="e : ${errores}" th:text="${e}">Error</div>
+            </div>
+            <p>Cuenta: <strong th:text="${email}">ana.perez@correo.test</strong></p>
+            <p class="nota">Use entre 15 y 64 caracteres. Se admiten espacios y cualquier carácter; no se exigen
+                mayúsculas, números ni símbolos. Se rechazan las contraseñas de uso frecuente.</p>
+            <form th:action="@{/activar}" method="post">
+                <input type="hidden" name="token" th:value="${token}">
+                <div class="campo"><label for="clave">Nueva contraseña</label>
+                    <input type="password" id="clave" name="clave" required autocomplete="new-password"></div>
+                <div class="campo"><label for="confirmacion">Repetir contraseña</label>
+                    <input type="password" id="confirmacion" name="confirmacion" required autocomplete="new-password"></div>
+                <div class="acciones"><button type="submit" class="boton primario">Guardar contraseña</button></div>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

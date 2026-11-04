@@ -1,0 +1,86 @@
+/* Estilo de los prototipos de interfaces (Figuras 19 a 21 del documento) */
+:root {
+    --verde: #4d7c6f;
+    --verde-claro: #d0e2dc;
+    --rosado: #f9ece8;
+    --gris: #e6e6e6;
+    --borde: #888888;
+    --texto: #111111;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    color: var(--texto);
+    background: #f4f4f4;
+}
+.marco {
+    max-width: 1080px;
+    margin: 16px auto;
+    background: #fff;
+    border: 2px solid #333;
+    min-height: 480px;
+}
+.encabezado {
+    background: var(--verde);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 2px solid #333;
+}
+.encabezado .marca { font-weight: bold; font-size: 20px; color: #fff; text-decoration: none; }
+.encabezado nav { display: flex; gap: 16px; align-items: center; }
+.encabezado nav a, .encabezado nav button {
+    color: #fff; text-decoration: none; background: none; border: none; font: inherit; cursor: pointer; padding: 0;
+}
+.encabezado nav a:hover, .encabezado nav button:hover { text-decoration: underline; }
+.encabezado .usuario { font-size: 15px; opacity: .95; }
+.contenido { padding: 18px 22px 28px; }
+h1 { font-size: 22px; margin: 6px 0 18px; }
+h2 { font-size: 17px; margin: 22px 0 10px; }
+.campo { display: grid; grid-template-columns: 260px 1fr; align-items: center; gap: 12px; margin: 10px 0; }
+.campo label { font-size: 15px; }
+input[type=text], input[type=email], input[type=password], input[type=date], input[type=file], select, textarea {
+    width: 100%; max-width: 520px; padding: 8px 10px; border: 2px solid var(--borde); font: inherit; background: #fff;
+}
+textarea { min-height: 90px; max-width: 100%; }
+.casillas { display: flex; gap: 28px; margin: 14px 0; }
+.boton {
+    display: inline-block; padding: 8px 22px; border: 2px solid #333; border-radius: 6px;
+    background: var(--gris); color: var(--texto); font: inherit; cursor: pointer; text-decoration: none;
+}
+.boton.primario { background: var(--verde-claro); }
+.boton.alerta { background: var(--rosado); }
+.acciones { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; }
+th, td { border: 1px solid var(--borde); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--gris); }
+tr.seleccionada td { background: #f3f8f6; }
+.caja { border: 2px solid #333; padding: 12px 16px; margin: 16px 0; }
+.caja.resultado { background: var(--rosado); }
+.caja.resultado.ok { background: #eaf3ef; }
+.caja ul { margin: 6px 0; padding-left: 4px; list-style: none; }
+.caja li { margin: 6px 0; }
+.nota { font-style: italic; font-size: 14px; }
+.mensaje { padding: 10px 14px; margin: 0 0 14px; border: 1px solid; }
+.mensaje.exito { background: #eaf3ef; border-color: var(--verde); }
+.mensaje.error { background: var(--rosado); border-color: #b04a3a; }
+.resumen { font-weight: bold; display: flex; gap: 40px; margin: 12px 0; }
+.estados { display: flex; justify-content: space-between; margin: 18px 20px 26px; position: relative; }
+.estados::before { content: ""; position: absolute; top: 12px; left: 30px; right: 30px; height: 2px; background: #333; }
+.estado { text-align: center; position: relative; z-index: 1; width: 120px; }
+.estado .punto { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #333; background: #fff; margin: 0 auto 6px; }
+.estado.alcanzado .punto { background: var(--verde); }
+.indicadores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.indicador { border: 2px solid #333; padding: 12px 16px; }
+.indicador .valor { font-size: 26px; font-weight: bold; margin: 6px 0; }
+.login { max-width: 460px; margin: 30px auto; }
+.login .campo { grid-template-columns: 1fr; gap: 4px; }
+@media (max-width: 720px) {
+    .campo { grid-template-columns: 1fr; }
+    .indicadores { grid-template-columns: 1fr; }
+    .estados { overflow-x: auto; }
+}

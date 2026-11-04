@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Nuevo expediente')}"></head>
+<body>
+<div class="marco">
+    <header th:replace="~{fragmentos :: encabezado}"></header>
+    <main class="contenido">
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+        <h1>Registrar expediente</h1>
+
+        <form th:action="@{/clientes}" method="get">
+            <div class="campo">
+                <label for="buscar">Documento de identidad del cliente</label>
+                <div class="acciones" style="margin:0">
+                    <input type="text" id="buscar" name="documento" th:value="${formulario.documento}" required
+                           style="max-width:260px">
+                    <button type="submit" class="boton">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <form th:if="${busquedaRealizada}" th:action="@{/expedientes}" th:object="${formulario}" method="post">
+            <input type="hidden" th:field="*{documento}">
+            <h2>Datos del cliente</h2>
+            <div th:if="${cliente}">
+                <div class="campo"><span>Apellido y nombre</span><strong th:text="${cliente.nombreCompleto()}">Pérez, Ana</strong></div>
+                <div class="campo"><span>Correo electrónico</span><span th:text="${cliente.usuario.email}">ana.perez@correo.test</span></div>
+                <div class="campo"><span>Teléfono</span><span th:text="${cliente.telefono} ?: '—'">—</span></div>
+            </div>
+            <div th:unless="${cliente}">
+                <p class="nota">El cliente no está registrado. Complete sus datos: el sistema creará su usuario
+                    con rol Cliente y le enviará el enlace para definir su contraseña.</p>
+                <div class="campo"><label for="apellido">Apellido</label><input type="text" id="apellido" th:field="*{apellido}"></div>
+                <div class="campo"><label for="nombre">Nombre</label><input type="text" id="nombre" th:field="*{nombre}"></div>
+                <div class="campo"><label for="email">Correo electrónico</label><input type="email" id="email" th:field="*{email}"></div>
+                <div class="campo"><label for="telefono">Teléfono</label><input type="text" id="telefono" th:field="*{telefono}"></div>
+            </div>
+
+            <h2>Datos del expediente</h2>
+            <div class="campo">
+                <label for="ascendiente">Ascendiente (apellido y nombre)</label>
+                <input type="text" id="ascendiente" th:field="*{ascendiente}" placeholder="Pérez, Giuseppe">
+            </div>
+            <div class="campo">
+                <label for="paisVia">País y vía de solicitud</label>
+                <select id="paisVia" th:field="*{paisVia}">
+                    <option value="">Seleccionar</option>
+                    <option th:each="pv : ${paisesYVias}" th:value="${pv}" th:text="${#strings.replace(pv, '|', ' – ')}">Italia – Descendencia</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="gestorId">Gestor asignado</label>
+                <select id="gestorId" th:field="*{gestorId}">
+                    <option value="">Seleccionar</option>
+                    <option th:each="g : ${gestores}" th:value="${g.id}" th:text="${g.nombre}">López, Marta</option>
+                </select>
+            </div>
+            <div class="acciones">
+                <button type="submit" class="boton primario">Registrar expediente</button>
+                <a class="boton" th:href="@{/}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

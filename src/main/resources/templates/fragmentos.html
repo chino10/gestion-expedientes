@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabecera(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | Gestión de Expedientes'">Gestión de Expedientes</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<header th:fragment="encabezado" class="encabezado">
+    <a class="marca" th:href="@{/}">Gestión de Expedientes</a>
+    <nav th:if="${actual != null}">
+        <a th:href="@{/}">Inicio</a>
+        <a th:if="${actual.rol.name() == 'ADMINISTRATIVO'}" th:href="@{/expedientes/nuevo}">Nuevo expediente</a>
+        <a th:if="${actual.rol.name() == 'GESTOR' or actual.rol.name() == 'ADMINISTRADOR'}" th:href="@{/indicadores}">Indicadores</a>
+        <span class="usuario"
+              th:text="${actual.rol.etiqueta} + ': ' + ${actual.nombre}">Gestor: López, Marta</span>
+        <form th:action="@{/salir}" method="post" style="display:inline">
+            <button type="submit">Salir</button>
+        </form>
+    </nav>
+</header>
+<div th:fragment="mensajes">
+    <div class="mensaje exito" th:if="${exito}" th:text="${exito}">Operación realizada.</div>
+    <div class="mensaje error" th:if="${error}" th:text="${error}">Error.</div>
+    <div class="mensaje error" th:if="${errores}">
+        <div th:each="e : ${errores}" th:text="${e}">Error</div>
+    </div>
+</div>
+</body>
+</html>
