@@ -133,12 +133,16 @@ public class DocumentoController {
         // Paso 5: validación preliminar (CU06).
         List<Hallazgo> hallazgos = validador.validar(expediente);
 
-        // Paso 6: evento de trazabilidad (CU10).
+        // Paso 6: evento de trazabilidad (CU10). Se toma la versión vigente del documento: cuando el
+        // documento ya existía, JPA incorpora la versión nueva como una copia gestionada, y es esa copia
+        // la que recibe el resultado de la validación.
+        VersionDocumento cargada = documento.versionVigente();
         trazabilidad.registrarEvento(usuario, expediente, AccionTrazabilidad.CARGA_DOCUMENTO,
-                requisito.etiqueta() + " (v" + version.getNumero() + "): resultado " + version.tipoResultado().toLowerCase(Locale.ROOT) + ".");
+                requisito.etiqueta() + " (v" + cargada.getNumero() + "): resultado "
+                        + cargada.tipoResultado().toLowerCase(Locale.ROOT) + ".");
 
         // Paso 7: resultado de la validación preliminar.
-        redireccion.addFlashAttribute("exito", "Se guardó la versión " + version.getNumero()
+        redireccion.addFlashAttribute("exito", "Se guardó la versión " + cargada.getNumero()
                 + " de " + requisito.etiqueta() + ".");
         redireccion.addFlashAttribute("resultado", resumen(requisito, hallazgos));
         redireccion.addFlashAttribute("resultadoValido", hallazgos.stream()

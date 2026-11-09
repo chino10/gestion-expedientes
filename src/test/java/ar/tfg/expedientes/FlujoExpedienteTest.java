@@ -202,6 +202,10 @@ class FlujoExpedienteTest {
             assertThat(d.versionVigente().tipoResultado()).isEqualTo("VALIDADO");
             assertThat(e.observacionesPendientes()).isEmpty();
         });
+        // CU10: el evento de la segunda versión registra el resultado de su validación.
+        assertThat(eventos.buscarPorExpediente(id)).extracting("detalle")
+                .contains("Acta de nacimiento – Solicitante (v1): resultado inconsistente.",
+                        "Acta de nacimiento – Solicitante (v2): resultado validado.");
 
         // El administrativo carga el resto; el acta del ascendiente se compara con el ascendiente.
         for (int i = 1; i < requisitos.size(); i++) {
